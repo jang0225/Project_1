@@ -323,6 +323,12 @@ void parsePrimary(const string& s, int& pos,
         parseExpr(s, pos, res, rows, cols, isScalar);
         if (hasError) return;
 
+        //공지에 나온 질의 때문에 추가, 만약 scalar가 들어오면 에러 출력
+        if (isScalar) {
+            hasError = true;
+            return;
+        }
+
         if (rows == cols) {
             res[0][0] = matDet(res, rows);
             isScalar = true;
@@ -424,8 +430,11 @@ void parseTerm(const string& s, int& pos,
         }
         else if (r_isScalar == true && rem_pos == '/') {
             double scal = (double)r_mat[0][0];
-            isScalar = false;
-            if (r_isScalar == true) {
+            if (scal == 0) {
+                hasError = true;
+                return;
+            }
+            if (isScalar == true) {
                 double scal_sec = (double)res[0][0];
                 res[0][0] = scal_sec / scal;
                 isScalar = true;
