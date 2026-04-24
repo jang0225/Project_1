@@ -324,7 +324,7 @@ void parsePrimary(const string& s, int& pos,
         if (hasError) return;
 
         //공지에 나온 질의 때문에 추가, 만약 scalar가 들어오면 에러 출력
-        if (isScalar) {
+        if (isScalar == true) {
             hasError = true;
             return;
         }
