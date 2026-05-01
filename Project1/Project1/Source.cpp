@@ -15,15 +15,28 @@ string formatVal(double v) {
     v_hun = v * 100;
     v = round(v_hun) / 100;
 
-    if ((int)v == v) {
-        return to_string(int(v));
-    }
-    else if ((int)(v * 10) == v * 10) {
-        return to_string(int(v)) + "." + to_string(abs((int)(v * 10) % 10));
+    //-0.5의 경우 int(v)==0이기에 앞에 -가 없이 출력되어 따로 케이스 분류해준 것임
+    if ((int(v) == 0) && (v < 0)) {
+
+        if ((int)(v * 10) == v * 10) {
+            return "-" + to_string(int(v)) + "." + to_string(abs((int)(v * 10) % 10));
+        }
+        else {
+            return "-" + to_string((int)v) + "." + to_string(abs((int)(v * 10) % 10)) + to_string(abs((int)(v * 100) % 10));
+        }
     }
     else {
-        return to_string((int)v) + "." + to_string(abs((int)(v * 10) % 10)) + to_string(abs((int)(v * 100) % 10));
+        if ((int)v == v) {
+            return to_string(int(v));
+        }
+        else if ((int)(v * 10) == v * 10) {
+            return to_string(int(v)) + "." + to_string(abs((int)(v * 10) % 10));
+        }
+        else {
+            return to_string((int)v) + "." + to_string(abs((int)(v * 10) % 10)) + to_string(abs((int)(v * 100) % 10));
+        }
     }
+
 }
 
 // ===================== 행렬 연산 함수 =====================
@@ -427,7 +440,7 @@ void parseTerm(const string& s, int& pos,
                 matScalarMul(scal, r_mat, r_rows, r_cols, res, rows, cols);
                 isScalar = false;
             }
-            
+
         }
         else if (r_isScalar == true && rem_pos == '/') {
             double scal = (double)r_mat[0][0];
@@ -449,7 +462,7 @@ void parseTerm(const string& s, int& pos,
             matMul(res, rows, cols, r_mat, r_rows, r_cols, res, rows, cols);
             isScalar = false;
         }
-        
+
     }
 }
 
