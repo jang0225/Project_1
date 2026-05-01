@@ -53,17 +53,13 @@ void matAdd(double A[][MAX_N], int a_rows, int a_cols,
     double C[][MAX_N], int& c_rows, int& c_cols) {
     /* 행렬 덧셈 구현 및 에러 핸들링 */
     if (a_rows == b_rows && a_cols == b_cols) {
-        double temp[MAX_N][MAX_N];
+        
         for (int i = 0; i < a_rows; i++) {
             for (int j = 0; j < a_cols; j++) {
-                temp[i][j] = A[i][j] + B[i][j];
+                C[i][j] = A[i][j] + B[i][j];
             }
         }
-        for (int i = 0; i < a_rows; i++) {
-            for (int j = 0; j < a_cols; j++) {
-                C[i][j] = temp[i][j];
-            }
-        }
+        
         c_rows = a_rows;
         c_cols = a_cols;
     }
@@ -81,18 +77,14 @@ void matSub(double A[][MAX_N], int a_rows, int a_cols,
     double B[][MAX_N], int b_rows, int b_cols,
     double C[][MAX_N], int& c_rows, int& c_cols) {
     /* 행렬 뺄셈 구현 및 에러 핸들링 */
-    double temp[MAX_N][MAX_N];
+    
     if (a_rows == b_rows && a_cols == b_cols) {
         for (int i = 0; i < a_rows; i++) {
             for (int j = 0; j < a_cols; j++) {
-                temp[i][j] = A[i][j] - B[i][j];
+                C[i][j] = A[i][j] - B[i][j];
             }
         }
-        for (int i = 0; i < a_rows; i++) {
-            for (int j = 0; j < a_cols; j++) {
-                C[i][j] = temp[i][j];
-            }
-        }
+        
         c_rows = a_rows;
         c_cols = a_cols;
 

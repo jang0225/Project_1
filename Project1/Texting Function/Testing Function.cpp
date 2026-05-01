@@ -4,27 +4,39 @@
 #include <cctype>
 using namespace std;
 
-/*
 const int MAX_N = 10;
 bool hasError;
 
 // [입력] v: 출력할 double 값
 // [출력] 소수점 둘째 자리까지 반올림된 문자열 (정수면 소수점 없이, 예: 3.00→"3", 1.50→"1.5")
 string formatVal(double v) {
-    // 주어진 double형 변수 v를 출력 형식에 맞는 문자열로 반환하는 코드 
+    /* 주어진 double형 변수 v를 출력 형식에 맞는 문자열로 반환하는 코드 */
     double v_hun;
     v_hun = v * 100;
     v = round(v_hun) / 100;
 
-    if ((int)v == v) {
-        return to_string(int(v));
-    }
-    else if ((int)(v * 10) == v * 10) {
-        return to_string(int(v)) + "." + to_string(abs((int)(v * 10) % 10));
+    //-0.5의 경우 int(v)==0이기에 앞에 -가 없이 출력되어 따로 케이스 분류해준 것임
+    if ((int(v) == 0) && (v < 0)) {
+
+        if ((int)(v * 10) == v * 10) {
+            return "-" + to_string(int(v)) + "." + to_string(abs((int)(v * 10) % 10));
+        }
+        else {
+            return "-" + to_string((int)v) + "." + to_string(abs((int)(v * 10) % 10)) + to_string(abs((int)(v * 100) % 10));
+        }
     }
     else {
-        return to_string((int)v) + "." + to_string(abs((int)(v * 10) % 10)) + to_string(abs((int)(v * 100) % 10));
+        if ((int)v == v) {
+            return to_string(int(v));
+        }
+        else if ((int)(v * 10) == v * 10) {
+            return to_string(int(v)) + "." + to_string(abs((int)(v * 10) % 10));
+        }
+        else {
+            return to_string((int)v) + "." + to_string(abs((int)(v * 10) % 10)) + to_string(abs((int)(v * 100) % 10));
+        }
     }
+
 }
 
 // ===================== 행렬 연산 함수 =====================
@@ -39,11 +51,17 @@ string formatVal(double v) {
 void matAdd(double A[][MAX_N], int a_rows, int a_cols,
     double B[][MAX_N], int b_rows, int b_cols,
     double C[][MAX_N], int& c_rows, int& c_cols) {
-    // 행렬 덧셈 구현 및 에러 핸들링 
+    /* 행렬 덧셈 구현 및 에러 핸들링 */
     if (a_rows == b_rows && a_cols == b_cols) {
+        double temp[MAX_N][MAX_N];
         for (int i = 0; i < a_rows; i++) {
             for (int j = 0; j < a_cols; j++) {
-                C[i][j] = A[i][j] + B[i][j];
+                temp[i][j] = A[i][j] + B[i][j];
+            }
+        }
+        for (int i = 0; i < a_rows; i++) {
+            for (int j = 0; j < a_cols; j++) {
+                C[i][j] = temp[i][j];
             }
         }
         c_rows = a_rows;
@@ -62,14 +80,19 @@ void matAdd(double A[][MAX_N], int a_rows, int a_cols,
 void matSub(double A[][MAX_N], int a_rows, int a_cols,
     double B[][MAX_N], int b_rows, int b_cols,
     double C[][MAX_N], int& c_rows, int& c_cols) {
-    // 행렬 뺄셈 구현 및 에러 핸들링 
+    /* 행렬 뺄셈 구현 및 에러 핸들링 */
+    double temp[MAX_N][MAX_N];
     if (a_rows == b_rows && a_cols == b_cols) {
         for (int i = 0; i < a_rows; i++) {
             for (int j = 0; j < a_cols; j++) {
-                C[i][j] = A[i][j] - B[i][j];
+                temp[i][j] = A[i][j] - B[i][j];
             }
         }
-
+        for (int i = 0; i < a_rows; i++) {
+            for (int j = 0; j < a_cols; j++) {
+                C[i][j] = temp[i][j];
+            }
+        }
         c_rows = a_rows;
         c_cols = a_cols;
 
@@ -87,7 +110,7 @@ void matSub(double A[][MAX_N], int a_rows, int a_cols,
 void matMul(double A[][MAX_N], int a_rows, int a_cols,
     double B[][MAX_N], int b_rows, int b_cols,
     double C[][MAX_N], int& c_rows, int& c_cols) {
-    // 행렬 곱셈 구현 및 에러 핸들링 
+    /* 행렬 곱셈 구현 및 에러 핸들링 */
     if (a_cols != b_rows) {
         hasError = true;
     }
@@ -119,7 +142,7 @@ void matMul(double A[][MAX_N], int a_rows, int a_cols,
 void matScalarMul(double scalar,
     double A[][MAX_N], int a_rows, int a_cols,
     double C[][MAX_N], int& c_rows, int& c_cols) {
-    // 행렬 스칼라 곱 구현 
+    /* 행렬 스칼라 곱 구현 */
     for (int i = 0; i < a_rows; i++) {
         for (int j = 0; j < a_cols; j++) {
             C[i][j] = A[i][j] * scalar;
@@ -136,7 +159,7 @@ void matScalarMul(double scalar,
 void matScalarDiv(double A[][MAX_N], int a_rows, int a_cols,
     double scalar,
     double C[][MAX_N], int& c_rows, int& c_cols) {
-    // 행렬 스칼라 나누기 구현 및 에러 핸들링
+    /* 행렬 스칼라 나누기 구현 및 에러 핸들링 */
     if (scalar == 0) {
         hasError = true;
     }
@@ -156,7 +179,7 @@ void matScalarDiv(double A[][MAX_N], int a_rows, int a_cols,
 // [출력] C (c_rows x c_cols): A의 전치 행렬 (c_rows = a_cols, c_cols = a_rows)
 void matTranspose(double A[][MAX_N], int a_rows, int a_cols,
     double C[][MAX_N], int& c_rows, int& c_cols) {
-    // 행렬 전치 구현 
+    /* 행렬 전치 구현 */
     double temp[MAX_N][MAX_N];
     for (int i = 0; i < a_cols; i++) {
         for (int j = 0; j < a_rows; j++) {
@@ -177,7 +200,7 @@ void matTranspose(double A[][MAX_N], int a_rows, int a_cols,
 // [입력] m: n x n 정방 행렬
 // [출력] 반환값: m의 행렬식 (double)
 double matDet(double m[][MAX_N], int n) {
-    // 행렬식 계산 구현 
+    /* 행렬식 계산 구현 */
     double Calculate = 0;
     double subMat[MAX_N][MAX_N];
 
@@ -209,7 +232,7 @@ double matDet(double m[][MAX_N], int n) {
 // [출력] res: 파싱된 행렬, rows: 행 수, cols: 열 수
 void parseMatrixLiteral(const string& mat,
     double res[][MAX_N], int& rows, int& cols) {
-    /* 주어진 형식의 문자열을 파싱하여 res 행렬에 저장 
+    /* 주어진 형식의 문자열을 파싱하여 res 행렬에 저장 */
     size_t first_semmi = mat.find(';', 0);
     size_t pos = 0;
     size_t ends = 0;
@@ -274,7 +297,7 @@ void parseMatrixLiteral(const string& mat,
 //
 // 진입점은 parseExpr이며, 내부에서 parseTerm → parsePrimary 순서로 호출됨
 
-/* 구현할 함수 아님!! 상호 재귀를 위한 전방 선언 
+/* 구현할 함수 아님!! 상호 재귀를 위한 전방 선언 */
 void parseExpr(const string& s, int& pos,
     double res[][MAX_N], int& rows, int& cols, bool& isScalar); //1x1행렬은 isScalar가 false고 scalar면 true임
 
@@ -312,6 +335,12 @@ void parsePrimary(const string& s, int& pos,
 
         parseExpr(s, pos, res, rows, cols, isScalar);
         if (hasError) return;
+
+        //공지에 나온 질의 때문에 추가, 만약 scalar가 들어오면 에러 출력
+        if (isScalar == true) {
+            hasError = true;
+            return;
+        }
 
         if (rows == cols) {
             res[0][0] = matDet(res, rows);
@@ -367,6 +396,8 @@ void parsePrimary(const string& s, int& pos,
         }
         res[0][0] = stod(s.substr(rem_posi, i));
         isScalar = true;
+        rows = 1;
+        cols = 1;
         return;
     }
 }
@@ -388,27 +419,50 @@ void parseTerm(const string& s, int& pos,
     while (pos < (int)s.length() && (s[pos] == '*' || s[pos] == '/')) {
         // 우측 피연산자를 파싱한 뒤, 연산자와 좌/우 피연산자의 타입(스칼라/행렬)에 따라
         // 적절한 연산(스칼라 나눗셈, 스칼라 곱셈, 행렬 곱셈)을 수행하고 결과를 res에 저장
-        /* 위 내용을 아래에 구현하시오 
+        /* 위 내용을 아래에 구현하시오 */
         double r_mat[MAX_N][MAX_N];
         int r_rows = 0, r_cols = 0;
         bool r_isScalar = false;
+        char rem_pos = s[pos];
         pos++;
 
         parsePrimary(s, pos, r_mat, r_rows, r_cols, r_isScalar);
         if (hasError) return;
 
-        if (isScalar == true) {
+        if (isScalar == true && rem_pos == '*') {
             double scal = (double)res[0][0];
-            matScalarMul(scal, r_mat, r_rows, r_cols, res, rows, cols);
+
+            if (r_isScalar == true) {
+                double scal_sec = (double)r_mat[0][0];
+                res[0][0] = scal * scal_sec;
+            }
+            else {
+                matScalarMul(scal, r_mat, r_rows, r_cols, res, rows, cols);
+                isScalar = false;
+            }
+
         }
-        else if (r_isScalar == true) {
+        else if (r_isScalar == true && rem_pos == '/') {
             double scal = (double)r_mat[0][0];
-            matScalarDiv(res, rows, cols, scal, res, rows, cols);
+            if (scal == 0) {
+                hasError = true;
+                return;
+            }
+            if (isScalar == true) {
+                double scal_sec = (double)res[0][0];
+                res[0][0] = scal_sec / scal;
+                isScalar = true;
+            }
+            else {
+                matScalarDiv(res, rows, cols, scal, res, rows, cols);
+                isScalar = false;
+            }
         }
         else {
             matMul(res, rows, cols, r_mat, r_rows, r_cols, res, rows, cols);
+            isScalar = false;
         }
-        isScalar = false;
+
     }
 }
 
@@ -428,7 +482,7 @@ void parseExpr(const string& s, int& pos,
     // 2) 연속되는 + 또는 - 를 왼쪽부터 처리
     while (pos < (int)s.length() && (s[pos] == '+' || s[pos] == '-')) {
         // 우측 피연산자를 파싱한 뒤, 연산자에 따라 덧셈 또는 뺄셈을 수행하고 결과를 res에 저장
-        /* 위 내용을 아래에 구현하시오 
+        /* 위 내용을 아래에 구현하시오 */
         double r_mat[MAX_N][MAX_N];
         int r_rows = 0, r_cols = 0;
         bool r_isScalar = false;
@@ -482,13 +536,5 @@ int main() {
         cout << out << endl;
     }
 
-    return 0;
-}
-*/
-
-
-// Just for testing git
-int main() {
-    cout << "Hello world!" << endl;
     return 0;
 }
